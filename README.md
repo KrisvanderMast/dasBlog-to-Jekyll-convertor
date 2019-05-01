@@ -1,1 +1,1 @@
-# dasBlog-to-Jekyll-convertor
+# dasBlog to Jekyll convertor
