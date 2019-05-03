@@ -1,4 +1,5 @@
 ﻿using Convertor.Support;
+using Html2Markdown;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -78,13 +79,21 @@ namespace Convertor
                     sw.WriteLine($"tags: [{SanitizeCategories(entry.Categories)}]");
                     sw.WriteLine($"author: Kris van der Mast");
                     sw.WriteLine("---");
+                    sw.WriteLine(SanitizeContent(entry.Content));
                 }
             }
         }
 
+        private static string SanitizeContent(string content)
+        {
+            var converter = new Converter();
+            return converter.Convert(converter.Convert(content));
+        }
+
         private static string SanitizeCategories(string categories)
         {
-            return categories;
+            //string[] separatedCategories = categories.Split(";");
+            return categories?.Split(";").Aggregate((x, y) => $"\"{x}\", \"{y}\"");
         }
 
         private static string SanitizeTitle(string title)

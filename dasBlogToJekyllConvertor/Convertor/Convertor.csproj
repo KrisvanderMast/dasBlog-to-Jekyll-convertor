@@ -5,4 +5,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="html2markdown" Version="3.2.1.341" />
+  </ItemGroup>
+
 </Project>
