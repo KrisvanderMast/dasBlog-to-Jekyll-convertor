@@ -99,7 +99,7 @@ namespace Convertor
             {
                 categories = "";
             }
-            var c = string.Join(",", categories?.Replace("|", " ").Split(";", StringSplitOptions.RemoveEmptyEntries).Select(item => "\"" + item + "\""));
+            var c = string.Join(",", categories.Replace("|", " ").Split(";", StringSplitOptions.RemoveEmptyEntries).Select(item => "\"" + item + "\""));
             return c;
         }
 
