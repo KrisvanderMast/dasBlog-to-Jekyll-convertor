@@ -62,8 +62,11 @@ namespace Convertor
                 }
             }
 
+            int counter = 1;
+
             foreach (var entry in dasBlogEntries)
             {
+                ProgressBar.DrawTextProgressBar(counter++, dasBlogEntries.Count());
                 DateTime entryDate = entry.Created;
                 string jekyllFileName = $"{entry.Created.ToString("yyyy-MM-dd")}-{SanitizeTitle(entry.Title)}.md";
 
@@ -92,8 +95,12 @@ namespace Convertor
 
         private static string SanitizeCategories(string categories)
         {
-            //string[] separatedCategories = categories.Split(";");
-            return categories?.Split(";").Aggregate((x, y) => $"\"{x}\", \"{y}\"");
+            if (categories == null)
+            {
+                categories = "";
+            }
+            var c = string.Join(",", categories?.Replace("|", " ").Split(";", StringSplitOptions.RemoveEmptyEntries).Select(item => "\"" + item + "\""));
+            return c;
         }
 
         private static string SanitizeTitle(string title)
