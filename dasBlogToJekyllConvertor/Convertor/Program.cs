@@ -17,15 +17,21 @@ namespace Convertor
 
         static void Main(string[] args)
         {
-            string path = args[0];
-
             ConsoleSetup();
+
+            string path = args[0];
+            string author = args[1];
+
+            if (string.IsNullOrEmpty(path) || string.IsNullOrEmpty(author))
+            {
+                Console.WriteLine("Please provide the path and authorname like c:\\temp\\dasblog \"Kris van der Mast\"");
+            }
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
             var dasBlogEntries = ReadIndasBlogEntries(path);
-            CrunchToJekyllPosts(dasBlogEntries, $"{path}\\{OUTPUTPATH}");
+            CrunchToJekyllPosts(dasBlogEntries, $"{path}\\{OUTPUTPATH}", author);
 
             sw.Stop();
             Console.WriteLine($"It took {sw.ElapsedMilliseconds}ms to convert {dasBlogEntries.Count} entries.");
@@ -48,7 +54,7 @@ namespace Convertor
             return dayEntries;
         }
 
-        private static void CrunchToJekyllPosts(IEnumerable<DayEntryEntry> dasBlogEntries, string path)
+        private static void CrunchToJekyllPosts(IEnumerable<DayEntryEntry> dasBlogEntries, string path, string author)
         {
             if (!Directory.Exists(path))
             {
@@ -75,12 +81,12 @@ namespace Convertor
                     sw.WriteLine("---");
                     sw.WriteLine($"layout: post");
                     sw.WriteLine($"title: \"{entry.Title}\"");
-                    sw.WriteLine($"date: 2017-03-29 17:12:00 +0200");
+                    sw.WriteLine($"date: {entry.Created}");
                     sw.WriteLine($"comments: true");
                     sw.WriteLine($"published: true");
                     sw.WriteLine($"categories: [\"post\"]");
                     sw.WriteLine($"tags: [{SanitizeCategories(entry.Categories)}]");
-                    sw.WriteLine($"author: Kris van der Mast");
+                    sw.WriteLine($"author: {author}");
                     sw.WriteLine("---");
                     sw.WriteLine(SanitizeContent(entry.Content));
                 }
@@ -99,13 +105,14 @@ namespace Convertor
             {
                 categories = "";
             }
-            var c = string.Join(",", categories.Replace("|", " ").Split(";", StringSplitOptions.RemoveEmptyEntries).Select(item => "\"" + item + "\""));
+
+            var c = string.Join(",", categories.Replace("|", ";").Split(";", StringSplitOptions.RemoveEmptyEntries).Select(item => "\"" + item + "\""));
             return c;
         }
 
         private static string SanitizeTitle(string title)
         {
-            return Regex.Replace(title.ToLower(), "[^a-z ]", "").Replace(" ", "-");
+            return Regex.Replace(title.ToLower(), "[^a-z0-9 ]", "").Replace(" ", "-");
         }
 
         private static void ConsoleSetup()
